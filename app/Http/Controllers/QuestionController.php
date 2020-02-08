@@ -23,11 +23,13 @@ class QuestionController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return View
      */
     public function create()
     {
-        //
+        $question = new Question();
+
+        return view('questions.create', compact('question'));
     }
 
     /**
