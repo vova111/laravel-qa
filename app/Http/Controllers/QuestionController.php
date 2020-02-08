@@ -50,11 +50,13 @@ class QuestionController extends Controller
      * Display the specified resource.
      *
      * @param  \App\Question  $question
-     * @return \Illuminate\Http\Response
+     * @return View
      */
     public function show(Question $question)
     {
-        //
+        $question->increment('views');
+
+        return view("questions.show", compact("question"));
     }
 
     /**
