@@ -26,7 +26,7 @@
                                 >
                                     <i class="fa fa-caret-up fa-3x"></i>
                                 </a>
-                                <form id="up-vote-question-{{ $question->id }}" action="{{ route("question.vote", $question->id) }}" method="post" style="display: none">
+                                <form id="up-vote-question-{{ $question->id }}" action="{{ route("questions.vote", $question->id) }}" method="post" style="display: none">
                                     @csrf
                                     <input type="hidden" name="vote" value="1">
                                 </form>
@@ -38,7 +38,7 @@
                                 >
                                     <i class="fa fa-caret-down fa-3x"></i>
                                 </a>
-                                <form id="down-vote-question-{{ $question->id }}" action="{{ route("question.vote", $question->id) }}" method="post" style="display: none">
+                                <form id="down-vote-question-{{ $question->id }}" action="{{ route("questions.vote", $question->id) }}" method="post" style="display: none">
                                     @csrf
                                     <input type="hidden" name="vote" value="-1">
                                 </form>
