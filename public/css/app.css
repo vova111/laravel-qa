@@ -10970,3 +10970,7 @@ a.text-dark:focus {
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
 
+[v-cloal] {
+  display: none;
+}
+
