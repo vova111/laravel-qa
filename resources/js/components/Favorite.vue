@@ -29,9 +29,6 @@
       endpoint() {
         return this.isFavorited ? `/questions/${this.id}/unfavorite` : `/questions/${this.id}/favorite`;
       },
-      singedIn () {
-        return window.Auth.singedIn;
-      },
     },
     methods: {
       destroy () {
