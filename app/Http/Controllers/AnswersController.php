@@ -23,13 +23,20 @@ class AnswersController extends Controller
      *
      * @param Question $question
      * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\RedirectResponse
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse
      */
     public function store(Question $question, Request $request)
     {
-        $question->answers()->create($request->validate([
+        $answer = $question->answers()->create($request->validate([
             'body' => 'required',
         ]) + ['user_id' => \Auth::id()]);
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'message' => "Your answer has been submitted successfully",
+                'answer' => $answer->load('user'),
+            ]);
+        }
 
         return back()->with('success', 'You answer has been submitted successfully');
     }
