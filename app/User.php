@@ -92,19 +92,21 @@ class User extends Authenticatable
 
         $model->votes_count = $upVotes + $downVotes;
         $model->save();
+
+        return $model->votes_count;
     }
 
     public function voteQuestion(Question $question, $vote)
     {
         $voteQuestions = $this->voteQuestions();
 
-        $this->_vote($voteQuestions, $question, $vote);
+        return $this->_vote($voteQuestions, $question, $vote);
     }
 
     public function voteAnswer(Answer $answer, $vote)
     {
         $voteAnswers = $this->voteAnswers();
 
-        $this->_vote($voteAnswers, $answer, $vote);
+        return $this->_vote($voteAnswers, $answer, $vote);
     }
 }
