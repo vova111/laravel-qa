@@ -25,14 +25,14 @@
 <script>
   import Answer from './Answer';
   import NewAnswer from './NewAnswer';
-  import lighlight from '../mixins/highlight';
+  import highlight from '../mixins/highlight';
 
   export default {
     components: {
       Answer,
       NewAnswer,
     },
-    mixins: [lighlight],
+    mixins: [highlight],
     props: ['question'],
     data () {
       return {
@@ -65,7 +65,9 @@
       add (answer) {
         this.answers.push(answer);
         this.count++;
-        this.lighlight();
+        this.$nextTick(() => {
+          this.highlight(`answer-${answer.id}`);
+        });
       },
     },
   };
