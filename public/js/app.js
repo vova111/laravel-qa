@@ -11578,6 +11578,7 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Answer__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Answer */ "./resources/js/components/Answer.vue");
 /* harmony import */ var _NewAnswer__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./NewAnswer */ "./resources/js/components/NewAnswer.vue");
+/* harmony import */ var _mixins_highlight__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../mixins/highlight */ "./resources/js/mixins/highlight.js");
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
 
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
@@ -11612,11 +11613,13 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 //
 
 
+
 /* harmony default export */ __webpack_exports__["default"] = ({
   components: {
     Answer: _Answer__WEBPACK_IMPORTED_MODULE_0__["default"],
     NewAnswer: _NewAnswer__WEBPACK_IMPORTED_MODULE_1__["default"]
   },
+  mixins: [_mixins_highlight__WEBPACK_IMPORTED_MODULE_2__["default"]],
   props: ['question'],
   data: function data() {
     return {
@@ -11655,6 +11658,7 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
     add: function add(answer) {
       this.answers.push(answer);
       this.count++;
+      this.lighlight();
     }
   }
 });
@@ -11800,6 +11804,7 @@ md.use(markdown_it_prism__WEBPACK_IMPORTED_MODULE_1___default.a);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _MEditor__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./MEditor */ "./resources/js/components/MEditor.vue");
 //
 //
 //
@@ -11826,7 +11831,13 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+
 /* harmony default export */ __webpack_exports__["default"] = ({
+  components: {
+    MEditor: _MEditor__WEBPACK_IMPORTED_MODULE_0__["default"]
+  },
   props: ['questionId'],
   data: function data() {
     return {
@@ -64670,29 +64681,40 @@ var render = function() {
           _c("hr"),
           _vm._v(" "),
           _c("form", [
-            _c("div", { staticClass: "form-group" }, [
-              _c("textarea", {
-                directives: [
-                  {
-                    name: "model",
-                    rawName: "v-model",
-                    value: _vm.body,
-                    expression: "body"
-                  }
-                ],
-                staticClass: "form-control",
-                attrs: { rows: "7", required: "", name: "body" },
-                domProps: { value: _vm.body },
-                on: {
-                  input: function($event) {
-                    if ($event.target.composing) {
-                      return
-                    }
-                    _vm.body = $event.target.value
-                  }
-                }
-              })
-            ]),
+            _c(
+              "div",
+              { staticClass: "form-group" },
+              [
+                _c(
+                  "m-editor",
+                  { attrs: { body: _vm.body, name: "new-answer" } },
+                  [
+                    _c("textarea", {
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: _vm.body,
+                          expression: "body"
+                        }
+                      ],
+                      staticClass: "form-control",
+                      attrs: { rows: "7", required: "", name: "body" },
+                      domProps: { value: _vm.body },
+                      on: {
+                        input: function($event) {
+                          if ($event.target.composing) {
+                            return
+                          }
+                          _vm.body = $event.target.value
+                        }
+                      }
+                    })
+                  ]
+                )
+              ],
+              1
+            ),
             _vm._v(" "),
             _c("div", { staticClass: "form-group" }, [
               _c(

@@ -25,12 +25,14 @@
 <script>
   import Answer from './Answer';
   import NewAnswer from './NewAnswer';
+  import lighlight from '../mixins/highlight';
 
   export default {
     components: {
       Answer,
       NewAnswer,
     },
+    mixins: [lighlight],
     props: ['question'],
     data () {
       return {
@@ -63,6 +65,7 @@
       add (answer) {
         this.answers.push(answer);
         this.count++;
+        this.lighlight();
       },
     },
   };
