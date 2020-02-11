@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 
 class LoginController extends Controller
 {
@@ -36,5 +38,25 @@ class LoginController extends Controller
     public function __construct()
     {
         $this->middleware('guest')->except('logout');
+    }
+
+    public function getToken(Request $request)
+    {
+        $request->request->add([
+            'grant_type' => 'password',
+            'client_id' => 2,
+            'client_secret' => 'PTkuvIvSp2Yjv0UnXuApm59DxGQv4YKxN1QIznVY',
+            'username' => $request->username,
+            'password' => $request->password,
+        ]);
+
+        // Так как в nginx не работают env переменные, пишем этот костыль
+        // Надо найти способо подружить nginx с env
+        $appUrl = 'http://127.0.0.1:8000';
+
+        $requestToken = Request::create($appUrl . '/oauth/token', 'post');
+        $response = Route::dispatch($requestToken);
+
+        return $response;
     }
 }
