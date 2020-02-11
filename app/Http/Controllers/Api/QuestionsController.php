@@ -42,33 +42,52 @@ class QuestionsController extends Controller
      * Display the specified resource.
      *
      * @param  \App\Question  $question
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function show(Question $question)
     {
-        //
+        return response()->json([
+            'title' => $question->title,
+            'body' => $question->body,
+            'body_html' => $question->body_html,
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Question  $question
-     * @return \Illuminate\Http\Response
+     * @param AskQuestionRequest $request
+     * @param \App\Question $question
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-    public function update(Request $request, Question $question)
+    public function update(AskQuestionRequest $request, Question $question)
     {
-        //
+        $this->authorize("update", $question);
+
+        $question->update($request->only('title', 'body'));
+
+        return response()->json([
+            'message' => "Your question has been updated",
+            'body_html' => $question->body_html,
+        ]);
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Question  $question
-     * @return \Illuminate\Http\Response
+     * @param \App\Question $question
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function destroy(Question $question)
     {
-        //
+        $this->authorize("delete", $question);
+
+        $question->delete();
+
+        return response()->json([
+            'message' => "Your question has been deleted",
+        ]);
     }
 }
