@@ -1,6 +1,14 @@
+import Vote from '../components/Vote';
+import UserInfo from '../components/UserInfo';
+import MEditor from '../components/MEditor';
 import highlight from './highlight';
 
 export default {
+  components: {
+    Vote,
+    UserInfo,
+    MEditor,
+  },
   mixins: [highlight],
   data () {
     return {
