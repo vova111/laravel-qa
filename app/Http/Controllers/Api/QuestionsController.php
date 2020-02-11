@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\AskQuestionRequest;
 use App\Http\Resources\QuestionResource;
 use App\Question;
 use Illuminate\Http\Request;
@@ -24,12 +25,17 @@ class QuestionsController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param AskQuestionRequest $request
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function store(Request $request)
+    public function store(AskQuestionRequest $request)
     {
-        //
+        $question = $request->user()->questions()->create($request->only('title', 'body'));
+
+        return response()->json([
+            'message' => "Your question has been submitted",
+            'question' => new QuestionResource($question),
+        ]);
     }
 
     /**
