@@ -76,11 +76,14 @@
 
 <!-- Scripts -->
 <script>
-    window.Auth = {!! json_encode([
-            'singedIn' => Auth::check(),
-            'user' => Auth::user(),
-            'url' => route('login'),
-        ]) !!}
+    window.Auth = @json([
+        'singedIn' => Auth::check(),
+        'user' => Auth::user(),
+    ]);
+    window.Urls = @json([
+        'api' => url('/api'),
+        'login' => route('login'),
+    ]);
 </script>
 <script src="{{ asset('js/app.js') }}"></script>
 </body>
