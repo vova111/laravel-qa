@@ -3,6 +3,7 @@ import QuestionPage from '../components/pages/QuestionPage';
 import MyPostsPage from '../components/pages/MyPostsPage';
 import NotFoundPage from '../components/pages/NotFoundPage';
 import CreateQuestionPage from '../components/pages/CreateQuestionPage';
+import EditQuestionPage from '../components/pages/EditQuestionPage';
 
 const routes = [{
   path: '/',
@@ -16,6 +17,10 @@ const routes = [{
   path: '/questions/create',
   component: CreateQuestionPage,
   name: 'questions.create',
+}, {
+  path: '/questions/:id/edit',
+  component: EditQuestionPage,
+  name: 'questions.edit'
 }, {
   path: '/my-posts',
   component: MyPostsPage,

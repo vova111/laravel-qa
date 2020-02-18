@@ -17,9 +17,13 @@
       <div class="d-flex align-items-center">
         <h3 class="mt-0"><a href="#">{{ question.title }}</a></h3>
         <div class="ml-auto">
-          <a href="#" v-if="authorize('modify', question)" class="btn btn-sm btn-outline-info">
+          <router-link
+            :to="{ name: 'questions.edit', params: { id: question.id } }"
+            v-if="authorize('modify', question)"
+            class="btn btn-sm btn-outline-info"
+          >
             Edit
-          </a>
+          </router-link>
           <form action="#" v-if="authorize('deleteQuestion', question)" method="post" class="form-delete">
             <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure?')">
               Delete
