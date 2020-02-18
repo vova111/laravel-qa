@@ -2,6 +2,7 @@ import QuestionsPage from '../components/pages/QuestionsPage';
 import QuestionPage from '../components/pages/QuestionPage';
 import MyPostsPage from '../components/pages/MyPostsPage';
 import NotFoundPage from '../components/pages/NotFoundPage';
+import CreateQuestionPage from '../components/pages/CreateQuestionPage';
 
 const routes = [{
   path: '/',
@@ -11,6 +12,10 @@ const routes = [{
   path: '/questions',
   component: QuestionsPage,
   name: 'questions',
+}, {
+  path: '/questions/create',
+  component: CreateQuestionPage,
+  name: 'questions.create',
 }, {
   path: '/my-posts',
   component: MyPostsPage,

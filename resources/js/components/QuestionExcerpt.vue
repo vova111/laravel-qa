@@ -21,8 +21,6 @@
             Edit
           </a>
           <form action="#" v-if="authorize('deleteQuestion', question)" method="post" class="form-delete">
-            @method ("DELETE")
-            @csrf
             <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure?')">
               Delete
             </button>
