@@ -11579,6 +11579,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Answer__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Answer */ "./resources/js/components/Answer.vue");
 /* harmony import */ var _NewAnswer__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./NewAnswer */ "./resources/js/components/NewAnswer.vue");
 /* harmony import */ var _mixins_highlight__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../mixins/highlight */ "./resources/js/mixins/highlight.js");
+/* harmony import */ var _event_bus__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../event-bus */ "./resources/js/event-bus.js");
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
 
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
@@ -11614,6 +11615,7 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 
 
 
+
 /* harmony default export */ __webpack_exports__["default"] = ({
   components: {
     Answer: _Answer__WEBPACK_IMPORTED_MODULE_0__["default"],
@@ -11627,12 +11629,22 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       count: this.question.answers_count,
       answers: [],
       answerIds: [],
-      nextUrl: null
+      nextUrl: null,
+      excludeAnswers: []
     };
   },
   computed: {
     title: function title() {
       return this.count + " " + (this.count > 1 ? 'Answers' : 'Answer');
+    },
+    theNextUrl: function theNextUrl() {
+      if (this.nextUrl && this.excludeAnswers.length) {
+        return this.nextUrl + this.excludeAnswers.map(function (a) {
+          return '&excludes[]=' + a.id;
+        }).join('');
+      }
+
+      return this.nextUrl;
     }
   },
   created: function created() {
@@ -11653,7 +11665,7 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 
         (_this$answers = _this.answers).push.apply(_this$answers, _toConsumableArray(data.data));
 
-        _this.nextUrl = data.next_page_url;
+        _this.nextUrl = data.links.next;
       }).then(function () {
         _this.answerIds.forEach(function (id) {
           return _this.highlight("answer-".concat(id));
@@ -11663,15 +11675,24 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
     remove: function remove(index) {
       this.answers.splice(index, 1);
       this.count--;
+
+      if (this.count === 0) {
+        _event_bus__WEBPACK_IMPORTED_MODULE_3__["default"].$emit('answers-count-changed', this.count);
+      }
     },
     add: function add(answer) {
       var _this2 = this;
 
+      this.excludeAnswers.push(answer);
       this.answers.push(answer);
       this.count++;
       this.$nextTick(function () {
         _this2.highlight("answer-".concat(answer.id));
       });
+
+      if (this.count === 1) {
+        _event_bus__WEBPACK_IMPORTED_MODULE_3__["default"].$emit('answers-count-changed', this.count);
+      }
     }
   }
 });
@@ -11962,6 +11983,7 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _mixins_modification__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../mixins/modification */ "./resources/js/mixins/modification.js");
+/* harmony import */ var _event_bus__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../event-bus */ "./resources/js/event-bus.js");
 //
 //
 //
@@ -12021,6 +12043,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   mixins: [_mixins_modification__WEBPACK_IMPORTED_MODULE_0__["default"]],
@@ -12071,11 +12094,19 @@ __webpack_require__.r(__webpack_exports__);
         _this.$toast.success(data.message, "Success", {
           timeout: 2000
         });
+
+        _this.$router.push({
+          name: 'questions'
+        });
       });
-      setTimeout(function () {
-        window.location.href = '/questions';
-      }, 3000);
     }
+  },
+  mounted: function mounted() {
+    var _this2 = this;
+
+    _event_bus__WEBPACK_IMPORTED_MODULE_1__["default"].$on('answers-count-changed', function (count) {
+      _this2.question.answers_count = count;
+    });
   }
 });
 
@@ -12091,6 +12122,8 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _mixins_destroy__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../mixins/destroy */ "./resources/js/mixins/destroy.js");
+//
+//
 //
 //
 //
@@ -12668,7 +12701,27 @@ __webpack_require__.r(__webpack_exports__);
     Question: _Question__WEBPACK_IMPORTED_MODULE_0__["default"],
     Answers: _Answers__WEBPACK_IMPORTED_MODULE_1__["default"]
   },
-  props: ['question']
+  props: ['slug'],
+  data: function data() {
+    return {
+      question: {}
+    };
+  },
+  mounted: function mounted() {
+    this.fetchQuestion();
+  },
+  methods: {
+    fetchQuestion: function fetchQuestion() {
+      var _this = this;
+
+      axios.get("/questions/".concat(this.slug)).then(function (_ref) {
+        var data = _ref.data;
+        _this.question = data.data;
+      })["catch"](function (error) {
+        return console.log(error);
+      });
+    }
+  }
 });
 
 /***/ }),
@@ -65062,7 +65115,7 @@ var render = function() {
                       })
                     }),
                     _vm._v(" "),
-                    _vm.nextUrl
+                    _vm.theNextUrl
                       ? _c("div", { staticClass: "text-center mt-3" }, [
                           _c(
                             "button",
@@ -65071,7 +65124,7 @@ var render = function() {
                               on: {
                                 click: function($event) {
                                   $event.preventDefault()
-                                  return _vm.fetch(_vm.nextUrl)
+                                  return _vm.fetch(_vm.theNextUrl)
                                 }
                               }
                             },
@@ -65493,7 +65546,25 @@ var render = function() {
               _c("div", { staticClass: "d-flex align-items-center" }, [
                 _c("h1", [_vm._v(_vm._s(_vm.title))]),
                 _vm._v(" "),
-                _vm._m(0)
+                _c(
+                  "div",
+                  { staticClass: "ml-auto" },
+                  [
+                    _c(
+                      "router-link",
+                      {
+                        staticClass: "btn btn-outline-secondary",
+                        attrs: { exact: "", to: { name: "questions" } }
+                      },
+                      [
+                        _vm._v(
+                          "\n                Back to all Questions\n              "
+                        )
+                      ]
+                    )
+                  ],
+                  1
+                )
               ])
             ]),
             _vm._v(" "),
@@ -65573,23 +65644,7 @@ var render = function() {
     ])
   ])
 }
-var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "ml-auto" }, [
-      _c(
-        "a",
-        {
-          staticClass: "btn btn-outline-secondary",
-          attrs: { href: "/questions" }
-        },
-        [_vm._v("\n                Back to all Questions\n              ")]
-      )
-    ])
-  }
-]
+var staticRenderFns = []
 render._withStripped = true
 
 
@@ -65646,11 +65701,25 @@ var render = function() {
     _vm._v(" "),
     _c("div", { staticClass: "media-body" }, [
       _c("div", { staticClass: "d-flex align-items-center" }, [
-        _c("h3", { staticClass: "mt-0" }, [
-          _c("a", { attrs: { href: "#" } }, [
-            _vm._v(_vm._s(_vm.question.title))
-          ])
-        ]),
+        _c(
+          "h3",
+          { staticClass: "mt-0" },
+          [
+            _c(
+              "router-link",
+              {
+                attrs: {
+                  to: {
+                    name: "questions.show",
+                    params: { slug: _vm.question.slug }
+                  }
+                }
+              },
+              [_vm._v(_vm._s(_vm.question.title))]
+            )
+          ],
+          1
+        ),
         _vm._v(" "),
         _c(
           "div",
@@ -66209,16 +66278,18 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c(
-    "div",
-    { staticClass: "container" },
-    [
-      _c("question", { attrs: { question: _vm.question } }),
-      _vm._v(" "),
-      _c("answers", { attrs: { question: _vm.question } })
-    ],
-    1
-  )
+  return _vm.question.id
+    ? _c(
+        "div",
+        { staticClass: "container" },
+        [
+          _c("question", { attrs: { question: _vm.question } }),
+          _vm._v(" "),
+          _c("answers", { attrs: { question: _vm.question } })
+        ],
+        1
+      )
+    : _vm._e()
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -81471,7 +81542,7 @@ __webpack_require__.r(__webpack_exports__);
     return user.id === model.user.id;
   },
   accept: function accept(user, answer) {
-    return user.id === answer.question.user.id;
+    return user.id === answer.question_user_id;
   },
   deleteQuestion: function deleteQuestion(user, question) {
     return user.id === question.user.id && question.answers_count < 1;
@@ -83098,7 +83169,8 @@ var routes = [{
 }, {
   path: '/questions/:slug',
   component: _components_pages_QuestionPage__WEBPACK_IMPORTED_MODULE_1__["default"],
-  name: 'questions.show'
+  name: 'questions.show',
+  props: true
 }, {
   path: '*',
   component: _components_pages_NotFoundPage__WEBPACK_IMPORTED_MODULE_3__["default"]

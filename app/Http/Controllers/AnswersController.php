@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Answer;
+use App\Http\Resources\AnswerResource;
 use App\Question;
 use Illuminate\Http\Request;
 
@@ -15,7 +16,16 @@ class AnswersController extends Controller
 
     public function index(Question $question)
     {
-        return $question->answers()->with('user')->simplePaginate(3);
+        $answers = $question->answers()
+            ->with('user')
+            ->where(function ($q) {
+                if (request()->has('excludes')) {
+                    $q->whereNotIn('id', request()->query('excludes'));
+                }
+            })
+            ->simplePaginate(3);
+
+        return AnswerResource::collection($answers);
     }
 
     /**

@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div v-if="question.id" class="container">
     <question :question="question"></question>
     <answers :question="question"></answers>
   </div>
@@ -14,8 +14,25 @@
       Question,
       Answers,
     },
-    props: ['question'],
-  }
+    props: ['slug'],
+    data () {
+      return {
+        question: {},
+      };
+    },
+    mounted () {
+      this.fetchQuestion();
+    },
+    methods: {
+      fetchQuestion () {
+        axios.get(`/questions/${this.slug}`)
+          .then(({ data }) => {
+            this.question = data.data;
+          })
+          .catch(error => console.log(error));
+      },
+    },
+  };
 </script>
 
 <style scoped>
