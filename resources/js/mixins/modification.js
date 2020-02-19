@@ -2,6 +2,7 @@ import Vote from '../components/Vote';
 import UserInfo from '../components/UserInfo';
 import MEditor from '../components/MEditor';
 import highlight from './highlight';
+import destroy from './destroy';
 
 export default {
   components: {
@@ -9,7 +10,7 @@ export default {
     UserInfo,
     MEditor,
   },
-  mixins: [highlight],
+  mixins: [highlight, destroy],
   data () {
     return {
       editing: false,
@@ -39,26 +40,6 @@ export default {
         .catch(({ response }) => {
           this.$toast.error(response.data.message, "Error", { timeout: 3000 });
         });
-    },
-    destroy () {
-      this.$toast.question('Are you sure about that?', 'Confirm', {
-        timeout: 20000,
-        close: false,
-        overlay: true,
-        displayMode: 'once',
-        id: 'question',
-        zindex: 999,
-        position: 'center',
-        buttons: [
-          ['<button><b>YES</b></button>', (instance, toast) => {
-            this.delete();
-            instance.hide({ transitionOut: 'fadeOut' }, toast, 'button');
-          }, true],
-          ['<button>NO</button>', (instance, toast) => {
-            instance.hide({ transitionOut: 'fadeOut' }, toast, 'button');
-          }],
-        ],
-      });
     },
   },
 };
